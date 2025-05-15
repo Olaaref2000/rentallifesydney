@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rental Life Sydney</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    header {
+      background-color: #0a2a66;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+
+    .container {
+      padding: 1rem;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Rental Life Sydney Dashboard</h1>
+    <p>Visualising rental affordability across Greater Sydney</p>
+  </header>
+
+  <div id="map"></div>
+
+  <div class="container">
+    <h2>Rental Trends</h2>
+    <canvas id="rentChart"></canvas>
+  </div>
+
+  <script>
+    // Sample Leaflet map initialization
+    const map = L.map('map').setView([-33.8688, 151.2093], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Sample rental data by region
+    const rentData = [
+      { suburb: "Parramatta", rent: 630 },
+      { suburb: "Newtown", rent: 780 },
+      { suburb: "Liverpool", rent: 590 },
+      { suburb: "Bondi", rent: 950 }
+    ];
+
+    // Add circle markers for rent on the map
+    rentData.forEach(data => {
+      L.circleMarker([-33.8 + Math.random() * 0.2, 151.0 + Math.random() * 0.2], {
+        radius: data.rent / 100,
+        color: "#f03",
+        fillColor: "#f03",
+        fillOpacity: 0.5
+      })
+        .bindPopup(`<strong>${data.suburb}</strong><br>Median Rent: $${data.rent}`)
+        .addTo(map);
+    });
+
+    // Chart.js visualization
+    const ctx = document.getElementById('rentChart').getContext('2d');
+    const rentChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: rentData.map(d => d.suburb),
+        datasets: [{
+          label: 'Median Weekly Rent ($)',
+          data: rentData.map(d => d.rent),
+          backgroundColor: '#0a2a66'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Sydney Suburb Rent Comparison' }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Weekly Rent ($)' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
